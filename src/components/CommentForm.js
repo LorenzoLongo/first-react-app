@@ -1,0 +1,33 @@
+import React from 'react';
+import {Field, reduxForm, SubmissionError} from "redux-form";
+import {connect} from "react-redux";
+import {renderField} from "../reducers/form";
+import {commentAdd} from "../actions/actions";
+
+const mapDispatchToProps = {
+    commentAdd
+};
+
+class CommentForm extends React.Component {
+    onSubmit(values) {
+        const {commentAdd, blogPostId, reset} = this.props;
+        return this.props.commentAdd(values.content, blogPostId).then(() => reset());
+    }
+
+    render() {
+        const {handleSubmit, submitting} = this.props;
+
+        return (
+            <div className="card mb-3 mt-3 shadow-sm">
+                <div className="card-body">
+                    <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+                        <Field name="content" label="Type your comment: " type="textarea" component={renderField}/>
+                        <button type="submit" className="btn-primary btn btn-block" disabled={submitting}>Add Comment</button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+}
+
+export default reduxForm({form: 'CommentForm'})(connect(null, mapDispatchToProps)(CommentForm))
